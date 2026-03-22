@@ -18,10 +18,27 @@ pip install deepagents-contrib-aws
 
 ### From constructor
 
+**Minimal** — S3 client is created implicitly; region and credentials are picked up from environment variables or `~/.aws/config`:
+
 ```python
 from deepagents_contrib_aws import S3Backend
 
 backend = S3Backend(bucket="my-bucket", prefix="agent/workspace/")
+```
+
+**Explicit** — pass a pre-configured boto3 client and region (useful for custom endpoints like LocalStack, S3-compatible storage, or reusing an existing session):
+
+```python
+import boto3
+from deepagents_contrib_aws import S3Backend
+
+client = boto3.client("s3", region_name="us-west-2")
+backend = S3Backend(
+    bucket="my-bucket",
+    prefix="agent/workspace/",
+    client=client,
+    region_name="us-west-2",
+)
 ```
 
 ### From environment variables
