@@ -50,3 +50,7 @@ select = ["E", "F", "I", "N", "W", "UP"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "integration: run against a real S3 bucket (requires S3_TEST_BUCKET env var)",
+]
+addopts = "-m 'not integration'"
