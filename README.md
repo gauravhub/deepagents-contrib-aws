@@ -76,11 +76,21 @@ backend = S3Backend.from_env()
 
 **Override** — `from_env()` accepts keyword arguments that take precedence over environment variables:
 
+| Kwarg | Overrides env var |
+|-------|-------------------|
+| `bucket` | `S3_BACKEND_BUCKET` |
+| `prefix` | `S3_BACKEND_PREFIX` |
+| `region_name` | `AWS_REGION` / `AWS_DEFAULT_REGION` |
+
 ```python
 from deepagents_contrib_aws import S3Backend
 
-# Use env vars but override the prefix
-backend = S3Backend.from_env(prefix="custom/prefix/")
+# Use env vars but override specific settings
+backend = S3Backend.from_env(
+    bucket="other-bucket",
+    prefix="custom/prefix/",
+    region_name="eu-west-1",
+)
 ```
 
 ### With deepagents
