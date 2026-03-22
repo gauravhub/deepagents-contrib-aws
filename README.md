@@ -42,16 +42,45 @@ backend = S3Backend(
 
 ### From environment variables
 
+**Minimal** — set the bucket and let boto3 resolve credentials and region from `~/.aws/credentials`, `~/.aws/config`, IAM role, or AWS SSO:
+
 ```bash
 export S3_BACKEND_BUCKET=my-bucket
-export S3_BACKEND_PREFIX=agent/workspace/
-export AWS_REGION=us-west-2  # or AWS_DEFAULT_REGION
 ```
 
 ```python
 from deepagents_contrib_aws import S3Backend
 
 backend = S3Backend.from_env()
+```
+
+**Full** — set all variables explicitly (e.g., in CI/CD, Docker, or Lambda):
+
+```bash
+# S3Backend config
+export S3_BACKEND_BUCKET=my-bucket
+export S3_BACKEND_PREFIX=agent/workspace/
+export AWS_REGION=us-west-2  # or AWS_DEFAULT_REGION
+
+# AWS credentials (if not using IAM role or ~/.aws/credentials)
+export AWS_ACCESS_KEY_ID=AKIA...
+export AWS_SECRET_ACCESS_KEY=...
+export AWS_SESSION_TOKEN=...  # only for temporary credentials (STS)
+```
+
+```python
+from deepagents_contrib_aws import S3Backend
+
+backend = S3Backend.from_env()
+```
+
+**Override** — `from_env()` accepts keyword arguments that take precedence over environment variables:
+
+```python
+from deepagents_contrib_aws import S3Backend
+
+# Use env vars but override the prefix
+backend = S3Backend.from_env(prefix="custom/prefix/")
 ```
 
 ### With deepagents
