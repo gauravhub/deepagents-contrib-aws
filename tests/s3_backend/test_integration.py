@@ -29,7 +29,9 @@ REGION = os.environ.get("AWS_DEFAULT_REGION", "us-east-1")
 
 def _skip_if_no_bucket():
     if not BUCKET:
-        pytest.skip("S3_TEST_BUCKET not set — skipping integration tests")
+        pytest.skip(
+            "S3_TEST_BUCKET not set — skipping integration tests"
+        )
 
 
 @pytest.fixture
@@ -56,10 +58,10 @@ class TestIntegrationReadWriteEditLs:
         assert w.error is None
         assert w.path == "/hello.py"
 
-        # Read
+        # Read (returns formatted string)
         r = backend.read("/hello.py")
-        assert r.error is None
-        assert "print('hello')" in r.file_data["content"]
+        assert isinstance(r, str)
+        assert "print('hello')" in r
 
         # Edit
         e = backend.edit("/hello.py", "hello", "world")
@@ -68,12 +70,12 @@ class TestIntegrationReadWriteEditLs:
 
         # Read again to verify edit
         r2 = backend.read("/hello.py")
-        assert "world" in r2.file_data["content"]
+        assert "world" in r2
 
         # Ls
-        ls = backend.ls("/")
-        assert ls.error is None
-        paths = {entry["path"] for entry in ls.entries}
+        entries = backend.ls_info("/")
+        assert isinstance(entries, list)
+        paths = {entry["path"] for entry in entries}
         assert "/hello.py" in paths
 
     def test_write_prevents_overwrite(self, backend):
@@ -90,15 +92,15 @@ class TestIntegrationSearchOps:
         backend.write("/docs/readme.md", "# Docs\n")
 
         # Grep
-        g = backend.grep("boto3")
-        assert g.error is None
-        assert len(g.matches) == 1
-        assert g.matches[0]["path"] == "/src/app.py"
+        g = backend.grep_raw("boto3")
+        assert isinstance(g, list)
+        assert len(g) == 1
+        assert g[0]["path"] == "/src/app.py"
 
         # Glob
-        gl = backend.glob("*.py")
-        assert gl.error is None
-        paths = {m["path"] for m in gl.matches}
+        gl = backend.glob_info("*.py")
+        assert isinstance(gl, list)
+        paths = {m["path"] for m in gl}
         assert "/src/app.py" in paths
         assert "/src/util.py" in paths
         assert "/docs/readme.md" not in paths
@@ -113,7 +115,9 @@ class TestIntegrationBulkOps:
         up = backend.upload_files(files)
         assert all(r.error is None for r in up)
 
-        dl = backend.download_files(["/a.txt", "/b.txt", "/missing.txt"])
+        dl = backend.download_files(
+            ["/a.txt", "/b.txt", "/missing.txt"]
+        )
         assert dl[0].content == b"content a"
         assert dl[1].content == b"content b"
         assert dl[2].error == "file_not_found"
