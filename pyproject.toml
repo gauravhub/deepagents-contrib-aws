@@ -17,7 +17,13 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-dependencies = []
+dependencies = [
+    "boto3>=1.34.0",
+    "deepagents>=0.5.0",
+]
+
+[tool.uv.sources]
+deepagents = { path = "/tmp/deepagents/libs/deepagents" }
 
 [project.urls]
 Homepage = "https://github.com/gauravhub/deepagents-contrib-aws"
@@ -32,6 +38,7 @@ build-backend = "hatchling.build"
 dev = [
     "pytest>=8.0",
     "ruff>=0.4",
+    "moto[s3]>=5.0",
 ]
 
 [tool.ruff]
@@ -43,3 +50,7 @@ select = ["E", "F", "I", "N", "W", "UP"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "integration: run against a real S3 bucket (requires S3_TEST_BUCKET env var)",
+]
+addopts = "-m 'not integration'"
