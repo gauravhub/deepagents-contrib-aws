@@ -29,7 +29,7 @@ backend = S3Backend(bucket="my-bucket", prefix="agent/workspace/")
 ```bash
 export S3_BACKEND_BUCKET=my-bucket
 export S3_BACKEND_PREFIX=agent/workspace/
-export AWS_DEFAULT_REGION=us-west-2
+export AWS_REGION=us-west-2  # or AWS_DEFAULT_REGION
 ```
 
 ```python
@@ -95,8 +95,8 @@ result = backend.download_files(["/a.txt", "/b.txt"])
 |----------|----------|---------|-------------|
 | `S3_BACKEND_BUCKET` | Yes (for `from_env()`) | -- | S3 bucket name |
 | `S3_BACKEND_PREFIX` | No | `""` | Key prefix for all objects |
-| `AWS_DEFAULT_REGION` | No | -- | AWS region (standard boto3 variable) |
-| `AWS_REGION` | No | -- | AWS region (alternative, checked first for Lambda compatibility) |
+| `AWS_REGION` | No | -- | AWS region (checked first; auto-set by AWS Lambda) |
+| `AWS_DEFAULT_REGION` | No | -- | AWS region (standard boto3 fallback if `AWS_REGION` is not set) |
 
 AWS credentials are resolved via the standard boto3 credential chain: environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`), shared credentials file (`~/.aws/credentials`), AWS SSO, or IAM role.
 
