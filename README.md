@@ -26,7 +26,7 @@ from deepagents_contrib_aws import S3Backend
 backend = S3Backend(bucket="my-bucket", prefix="agent/workspace/")
 ```
 
-**Explicit** — pass a pre-configured boto3 client and region (useful for custom endpoints like LocalStack, S3-compatible storage, or reusing an existing session):
+**Explicit** — pass a pre-configured boto3 client (useful for custom endpoints like LocalStack, S3-compatible storage, or reusing an existing session):
 
 ```python
 import boto3
@@ -37,7 +37,6 @@ backend = S3Backend(
     bucket="my-bucket",
     prefix="agent/workspace/",
     client=client,
-    region_name="us-west-2",
 )
 ```
 
