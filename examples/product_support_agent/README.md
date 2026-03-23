@@ -83,6 +83,50 @@ Each skill follows the [Anthropic Agent Skills](https://agentskills.io/specifica
 **Finance:**
 > "Our payment terminal keeps showing 'connection refused'"
 
+## Testing S3 Storage Routes
+
+The CompositeBackend routes different paths to S3. Here's how to verify each route is working:
+
+### /skills/ and /memories/ (populated by setup)
+
+These are populated when you run `uv run setup_backend.py`. Verify with:
+
+```bash
+aws s3 ls s3://<your-bucket>/<prefix>/skills/ --recursive
+aws s3 ls s3://<your-bucket>/<prefix>/memories/
+```
+
+### /large_tool_results/ (auto-evicted large outputs)
+
+When a tool output exceeds ~80K characters, the `FilesystemMiddleware` automatically saves it to S3 and replaces it with a truncated preview. Try this prompt:
+
+> Use Python to print "x" * 100000
+
+After the agent responds, check S3:
+
+```bash
+aws s3 ls s3://<your-bucket>/<prefix>/large_tool_results/
+```
+
+You should see a file named after the tool call ID containing the full output.
+
+### /conversation_history/ (summarized conversations)
+
+Summarization is configured to trigger at 10% of the context window (configurable via `SUMMARIZATION_TRIGGER` env var). After a few exchanges, the middleware evicts older messages to S3. To trigger it quickly, have a multi-turn conversation with tool use:
+
+> 1. "Compare troubleshooting steps for a laptop that won't turn on vs one with a flickering screen"
+> 2. "Now do the same comparison for blood pressure monitor errors E1 through E5"
+> 3. "Write a Python script that creates a JSON summary of all the troubleshooting steps we discussed"
+> 4. "Now compare payment terminal connection issues with card reader pairing problems"
+
+After several exchanges, check S3:
+
+```bash
+aws s3 ls s3://<your-bucket>/<prefix>/conversation_history/
+```
+
+You should see a markdown file named after the thread ID containing the summarized conversation history.
+
 ## Environment Variables
 
 | Variable | Required | Description |
