@@ -5,10 +5,10 @@ A `SandboxBackendProtocol` implementation that executes code and commands via [A
 ## Installation
 
 ```bash
-pip install deepagents-contrib-aws[agentcore]
+pip install deepagents-contrib-aws
 ```
 
-The `[agentcore]` extra installs the `bedrock-agentcore` SDK. If you only need `S3Backend`, install without the extra — the sandbox won't be available but nothing else is affected.
+Both backends and all dependencies are included in the base package.
 
 ## Quick Start
 

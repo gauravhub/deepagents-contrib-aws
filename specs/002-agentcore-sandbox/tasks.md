@@ -35,7 +35,7 @@
 **Purpose**: Create the class skeleton with constructor, properties, and lifecycle methods — MUST complete before user story work
 
 <!-- sequential -->
-- [x] T004 Create src/deepagents_contrib_aws/agentcore_sandbox.py with: `_extract_python_from_command()` helper (regex parsing `python3 -c "..."` and `python3 -c '...'` with backslash-escaped quote handling — port from reference at `/home/dhamijag/playground/deep-agents/sdk/hello_world/agentcore_sandbox.py`), `AgentCoreCodeInterpreterSandbox` class extending `BaseSandbox` with constructor (`region_name="us-west-2"`, `session_timeout_seconds=900`, `max_output_chars=100_000`, `code_interpreter_identifier="aws.codeinterpreter.v1"`), `id` property (returns `agentcore-ci-{session_id[:8]}` if session active, else `_sandbox_id`), `_ensure_session()` (lazy init — creates `CodeInterpreter(region, integration_source="deepagents")`, calls `start(identifier, session_timeout_seconds=timeout)`), `stop()` method, `__enter__`/`__exit__` context manager, stub `execute()` returning `ExecuteResponse(output="not implemented", exit_code=1)`, stub `upload_files()` and `download_files()`. Import `CodeInterpreter` with `try/except ImportError`. All code formatted to ruff line-length 88.
+- [x] T004 Create src/deepagents_contrib_aws/agentcore_sandbox.py with: `_extract_python_from_command()` helper (regex parsing `python3 -c "..."` and `python3 -c '...'` with backslash-escaped quote handling), `AgentCoreCodeInterpreterSandbox` class extending `BaseSandbox` with constructor (`region_name="us-west-2"`, `session_timeout_seconds=900`, `max_output_chars=100_000`, `code_interpreter_identifier="aws.codeinterpreter.v1"`), `id` property (returns `agentcore-ci-{session_id[:8]}` if session active, else `_sandbox_id`), `_ensure_session()` (lazy init — creates `CodeInterpreter(region, integration_source="deepagents")`, calls `start(identifier, session_timeout_seconds=timeout)`), `stop()` method, `__enter__`/`__exit__` context manager, stub `execute()` returning `ExecuteResponse(output="not implemented", exit_code=1)`, stub `upload_files()` and `download_files()`. Import `CodeInterpreter` with `try/except ImportError`. All code formatted to ruff line-length 88.
 
 **Checkpoint**: Class skeleton compiles, can be imported, stubs in place
 
@@ -206,6 +206,5 @@ Task T015: "Bump version to 0.2.0"
 - All implementation tasks modify `src/deepagents_contrib_aws/agentcore_sandbox.py` — they MUST run sequentially
 - Test files are independent — test creation tasks could run in parallel, but they depend on conftest (T003)
 - US1 and US2 are combined because they share `execute()` in the same file — cannot be parallelized
-- Reference implementation at `/home/dhamijag/playground/deep-agents/sdk/hello_world/agentcore_sandbox.py` — use as guidance for `_extract_python_from_command()` and response parsing
 - Ruff line-length 88 — break long function calls proactively
 - No `[tool.uv.sources]` local paths — all deps from PyPI

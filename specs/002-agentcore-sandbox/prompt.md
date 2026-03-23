@@ -15,9 +15,7 @@ Existing partner sandbox implementations follow this pattern:
 
 All partners accept a pre-created SDK object, implement the 4 abstract methods, and set a 30-minute default timeout.
 
-**Reference implementation exists at**: `/home/dhamijag/playground/deep-agents/sdk/hello_world/agentcore_sandbox.py` — a working `AgentCoreCodeInterpreterSandbox` extending `BaseSandbox`. It uses the `bedrock-agentcore` Python SDK's `CodeInterpreter` client, extracts Python from `python3 -c "..."` commands, and handles file upload/download via base64-encoded Python snippets.
-
-**Key limitation of the reference**: It only supports `python3 -c "..."` commands — all other shell commands are rejected. The `BaseSandbox` file operations (ls, read, write, edit, grep, glob) work because they generate `python3 -c` commands internally. However, the `execute()` tool exposed to agents only runs Python, not arbitrary shell commands.
+**Upstream protocol**: `deepagents.backends.protocol.SandboxBackendProtocol` and `deepagents.backends.sandbox.BaseSandbox` (available in deepagents>=0.4.0 on PyPI). Subclasses only need to implement `execute()`, `id`, `upload_files()`, and `download_files()`.
 
 **Upstream protocol**: `deepagents.backends.protocol.SandboxBackendProtocol` and `deepagents.backends.sandbox.BaseSandbox` (available in deepagents>=0.4.0 on PyPI).
 

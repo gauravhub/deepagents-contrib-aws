@@ -85,7 +85,7 @@ A developer wants to configure the S3Backend using environment variables so that
 
 ### Session 2026-03-20
 
-- No critical ambiguities detected. The upstream BackendProtocol interface contract and the existing reference implementation (`/home/dhamijag/playground/deep-agents/sdk/hello_world/s3_backend.py`) resolve all design questions. Spec is ready for planning.
+- No critical ambiguities detected. The upstream BackendProtocol interface contract resolves all design questions. Spec is ready for planning.
 
 ## Requirements *(mandatory)*
 

@@ -8,8 +8,6 @@ An S3-backed implementation of the deepagents `BackendProtocol` that persists ag
 pip install deepagents-contrib-aws
 ```
 
-S3Backend is included in the base package — no extras required.
-
 ## Quick Start
 
 ### From constructor

@@ -8,9 +8,7 @@ Implement an S3-based backend for the [deepagents](https://github.com/langchain-
 
 The deepagents framework defines a `BackendProtocol` (in `deepagents.backends.protocol`) that abstracts file operations. Existing implementations include `FilesystemBackend`, `StateBackend`, `StoreBackend`, and `CompositeBackend`. We are building an S3-backed implementation that uses Amazon S3 as persistent file storage.
 
-**Reference implementation exists at**: `/home/dhamijag/playground/deep-agents/sdk/hello_world/s3_backend.py` — a working 375-line S3Backend. Use this as a strong starting point but improve upon it for production quality.
-
-**Upstream protocol definition**: `/tmp/deepagents/libs/deepagents/deepagents/backends/protocol.py`
+**Upstream protocol definition**: `deepagents.backends.protocol` (available in deepagents>=0.4.0 on PyPI)
 
 ## Requirements
 

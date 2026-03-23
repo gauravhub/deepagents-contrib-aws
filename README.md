@@ -5,12 +5,10 @@ AWS backend implementations for the [deepagents](https://github.com/langchain-ai
 ## Installation
 
 ```bash
-# Core package (includes S3Backend)
 pip install deepagents-contrib-aws
-
-# With AgentCore Code Interpreter sandbox
-pip install deepagents-contrib-aws[agentcore]
 ```
+
+This installs both backends (S3Backend and AgentCoreCodeInterpreterSandbox) and all dependencies.
 
 ## Backends
 
