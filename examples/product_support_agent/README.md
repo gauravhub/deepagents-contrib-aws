@@ -112,7 +112,7 @@ You should see a file named after the tool call ID containing the full output.
 
 ### /conversation_history/ (summarized conversations)
 
-Summarization is configured to trigger at 10% of the context window (configurable via `SUMMARIZATION_TRIGGER` env var). After a few exchanges, the middleware evicts older messages to S3. To trigger it quickly, have a multi-turn conversation with tool use:
+Summarization triggers at 85% of the model's context window (default behavior from deepagents). When triggered, older messages are evicted and saved to S3. To trigger it, have a long multi-turn conversation with tool use:
 
 > 1. "Compare troubleshooting steps for a laptop that won't turn on vs one with a flickering screen"
 > 2. "Now do the same comparison for blood pressure monitor errors E1 through E5"
