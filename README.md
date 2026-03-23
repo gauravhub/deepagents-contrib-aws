@@ -93,6 +93,14 @@ Both backends resolve credentials via the standard boto3 credential chain:
 3. AWS SSO (`aws sso login`)
 4. IAM role (EC2, ECS, Lambda)
 
+## Examples
+
+| Example | Description |
+|---------|-------------|
+| [Product Support Agent](examples/product_support_agent/) | A deep agent with 3 skills (electronics, healthcare, finance) using CompositeBackend — AgentCore for execution, S3 for storage. Fully self-contained with its own `pyproject.toml`. |
+
+Each example is an independent project — `cd` into it, run `uv sync`, configure `.env`, and go. See the example's own README for setup instructions.
+
 ## Development
 
 See [docs/development.md](docs/development.md) for setup, testing, linting, building, and contributing guidelines.
