@@ -46,6 +46,14 @@ uv run setup_backend.py
 
 ## Run
 
+**Interactive CLI:**
+
+```bash
+uv run main.py
+```
+
+**LangGraph Studio** (visual UI):
+
 ```bash
 uv run langgraph dev
 ```
