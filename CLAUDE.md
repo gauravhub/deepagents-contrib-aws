@@ -1,29 +1,61 @@
 # deepagents-contrib-aws Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-03-22
+## Project Overview
 
-## Active Technologies
+AWS backend implementations for the [deepagents](https://github.com/langchain-ai/deepagents) framework. Two backends:
 
-- Python >=3.11 + boto3 >=1.34.0, deepagents (for BackendProtocol, result types, utilities) (001-s3-backend)
+- **S3Backend** — `BackendProtocol` implementation storing files in S3
+- **AgentCoreCodeInterpreterSandbox** — `SandboxBackendProtocol` implementation executing code via Bedrock AgentCore Code Interpreter
+
+## Tech Stack
+
+- Python >=3.11
+- `deepagents>=0.4.0` (PyPI — never depend on unreleased versions)
+- `boto3>=1.34.0`
+- `bedrock-agentcore` (optional dependency via `[agentcore]` extra)
 
 ## Project Structure
 
 ```text
-src/
+src/deepagents_contrib_aws/
+├── __init__.py                 # Re-exports S3Backend + AgentCoreCodeInterpreterSandbox (lazy)
+├── s3_backend.py               # S3-backed BackendProtocol
+├── agentcore_sandbox.py        # AgentCore SandboxBackendProtocol
+└── py.typed
+
 tests/
+├── test_init.py                # Package-level tests
+├── s3_backend/                 # S3 tests (moto-mocked)
+└── agentcore_sandbox/          # Sandbox tests (unittest.mock)
+
+docs/
+├── s3-backend.md               # S3Backend usage guide
+├── agentcore-sandbox.md        # Sandbox usage guide
+└── development.md              # Build/test guide
 ```
 
 ## Commands
 
-cd src [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECHNOLOGIES] pytest [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECHNOLOGIES] ruff check .
+```bash
+uv sync                          # Install all dependencies
+uv run pytest                    # Run unit tests (no AWS credentials needed)
+uv run ruff check src/ tests/    # Lint
+uv build                         # Build package
+```
 
 ## Code Style
 
-Python >=3.11: Follow standard conventions
+- Ruff with line-length 88
+- `from __future__ import annotations` in all files
+- Type hints on all public methods
+- Follow existing patterns in `s3_backend.py` for new backends
 
-## Recent Changes
+## Key Conventions
 
-- 001-s3-backend: Added Python >=3.11 + boto3 >=1.34.0, deepagents (for BackendProtocol, result types, utilities)
-
-<!-- MANUAL ADDITIONS START -->
-<!-- MANUAL ADDITIONS END -->
+- **No local source dependencies** — never add `[tool.uv.sources]` with local paths
+- **No exceptions from protocol methods** — `execute()` wraps errors in `ExecuteResponse`; `from_env()` MAY raise `ValueError`
+- **AWS env vars** — use `AWS_SESSION_TOKEN` (not legacy `AWS_SECURITY_TOKEN`); test conftest sets 4 vars: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, `AWS_DEFAULT_REGION`
+- **Optional dependencies** — use `try/except ImportError` pattern; extras in `[project.optional-dependencies]`
+- **Integration tests** — mark with `@pytest.mark.integration`, skipped by default via `addopts = "-m 'not integration'"`
+- **Version** — update in BOTH `pyproject.toml` AND `src/deepagents_contrib_aws/__init__.py`
+- **Test organization** — each backend gets its own `tests/<backend_name>/` subfolder
