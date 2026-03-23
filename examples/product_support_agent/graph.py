@@ -17,6 +17,47 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Patch summarization to trigger early (10% of context window
+# instead of default 85%). This makes conversation history
+# get saved to S3 after just a few exchanges instead of
+# requiring a near-full context window.
+SUMMARIZATION_TRIGGER_FRACTION = float(
+    os.environ.get("SUMMARIZATION_TRIGGER", "0.10")
+)
+SUMMARIZATION_KEEP_FRACTION = float(
+    os.environ.get("SUMMARIZATION_KEEP", "0.05")
+)
+
+import deepagents.middleware.summarization as _summ_mod
+
+_original_compute = _summ_mod._compute_summarization_defaults
+
+
+def _patched_compute(model):
+    out = _original_compute(model)
+    if out["trigger"][0] == "fraction":
+        targs = out.get("truncate_args_settings") or {}
+        out = {
+            **out,
+            "trigger": ("fraction", SUMMARIZATION_TRIGGER_FRACTION),
+            "keep": ("fraction", SUMMARIZATION_KEEP_FRACTION),
+            "truncate_args_settings": {
+                **targs,
+                "trigger": (
+                    "fraction",
+                    SUMMARIZATION_TRIGGER_FRACTION,
+                ),
+                "keep": (
+                    "fraction",
+                    SUMMARIZATION_KEEP_FRACTION,
+                ),
+            },
+        }
+    return out
+
+
+_summ_mod._compute_summarization_defaults = _patched_compute
+
 from deepagents import create_deep_agent
 from deepagents.backends.composite import CompositeBackend
 from deepagents_contrib_aws import (
