@@ -1,0 +1,11 @@
+[project]
+name = "product-support-agent"
+version = "0.1.0"
+description = "Product support deep agent example using deepagents with AWS backends"
+requires-python = ">=3.11"
+dependencies = [
+    "deepagents>=0.4.0",
+    "deepagents-contrib-aws>=0.2.0",
+    "python-dotenv",
+    "langgraph",
+]
