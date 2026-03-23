@@ -1,3 +1,8 @@
+---
+name: healthcare-products
+description: Usage guidance, safety information, and troubleshooting for healthcare and wellness devices
+---
+
 # Healthcare & Wellness Devices Support
 
 This skill provides product support guidance for healthcare and wellness monitoring devices. Use it to help users with setup, usage, troubleshooting, and understanding readings from their health devices.

@@ -1,3 +1,8 @@
+---
+name: electronics-support
+description: Diagnose and resolve common consumer electronics problems including TVs, laptops, smartphones, and headphones
+---
+
 # Skill: Consumer Electronics Support
 
 **Description:** Diagnose and resolve common consumer electronics problems including phones, tablets, laptops, monitors, headphones, and smart speakers.

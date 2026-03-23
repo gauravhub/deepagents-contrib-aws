@@ -1,3 +1,8 @@
+---
+name: finance-products
+description: Troubleshoot financial products including payment terminals, card readers, POS systems, and banking apps
+---
+
 # Skill: Financial Products Support
 
 **Description:** This skill provides troubleshooting guidance for financial hardware devices and banking applications. Use this skill whenever a user asks about payment terminals, card readers, POS systems, or banking app issues.

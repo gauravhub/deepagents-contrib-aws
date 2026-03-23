@@ -24,9 +24,9 @@ from deepagents_contrib_aws import S3Backend
 SCRIPT_DIR = Path(__file__).parent
 
 FILES_TO_UPLOAD = [
-    ("skills/electronics-support.md", "/skills/electronics-support.md"),
-    ("skills/healthcare-products.md", "/skills/healthcare-products.md"),
-    ("skills/finance-products.md", "/skills/finance-products.md"),
+    ("skills/electronics-support/SKILL.md", "/skills/electronics-support/SKILL.md"),
+    ("skills/healthcare-products/SKILL.md", "/skills/healthcare-products/SKILL.md"),
+    ("skills/finance-products/SKILL.md", "/skills/finance-products/SKILL.md"),
     ("memory/AGENTS.md", "/memories/AGENTS.md"),
 ]
 
