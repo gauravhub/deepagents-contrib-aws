@@ -81,6 +81,5 @@ Each skill follows the [Anthropic Agent Skills](https://agentskills.io/specifica
 |----------|----------|-------------|
 | `S3_BACKEND_BUCKET` | Yes | S3 bucket for persistent storage |
 | `S3_BACKEND_PREFIX` | No | Key prefix (e.g., `product-support/`) |
-| `AGENTCORE_REGION` | Yes | AWS region for AgentCore |
-| `AWS_REGION` | No | AWS region for S3 (fallback) |
-| `AWS_DEFAULT_REGION` | No | AWS region fallback |
+| `AWS_REGION` | Yes | AWS region for S3 and AgentCore |
+| `AWS_DEFAULT_REGION` | No | AWS region fallback (if `AWS_REGION` not set) |

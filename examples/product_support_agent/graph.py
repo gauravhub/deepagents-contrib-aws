@@ -58,13 +58,12 @@ def _build_backend():
         sys.exit(1)
 
     region = (
-        os.environ.get("AGENTCORE_REGION")
-        or os.environ.get("AWS_REGION")
+        os.environ.get("AWS_REGION")
         or os.environ.get("AWS_DEFAULT_REGION")
     )
     if not region:
         print(
-            "Error: No region configured. Set AGENTCORE_REGION "
+            "Error: No region configured. Set AWS_REGION "
             "in .env.",
             file=sys.stderr,
         )
