@@ -4,7 +4,7 @@ Extends BaseSandbox to execute code and commands via Amazon Bedrock
 AgentCore Code Interpreter. Supports both Python (executeCode) and
 shell commands (executeCommand), with native file upload/download.
 
-Requires: pip install deepagents-contrib-aws[agentcore]
+Requires: pip install deepagents-contrib-aws
 """
 
 from __future__ import annotations
@@ -22,12 +22,9 @@ from deepagents.backends.protocol import (
 )
 from deepagents.backends.sandbox import BaseSandbox
 
-try:
-    from bedrock_agentcore.tools.code_interpreter_client import (
-        CodeInterpreter,
-    )
-except ImportError:
-    CodeInterpreter = None  # type: ignore[assignment,misc]
+from bedrock_agentcore.tools.code_interpreter_client import (
+    CodeInterpreter,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -118,12 +115,6 @@ class AgentCoreCodeInterpreterSandbox(BaseSandbox):
             "aws.codeinterpreter.v1"
         ),
     ) -> None:
-        if CodeInterpreter is None:
-            raise ImportError(
-                "bedrock-agentcore is required for "
-                "AgentCoreCodeInterpreterSandbox. Install with: "
-                "pip install deepagents-contrib-aws[agentcore]"
-            )
         self._region = region_name
         self._session_timeout = session_timeout_seconds
         self._max_output_chars = max_output_chars

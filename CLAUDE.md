@@ -12,7 +12,7 @@ AWS backend implementations for the [deepagents](https://github.com/langchain-ai
 - Python >=3.11
 - `deepagents>=0.4.0` (PyPI — never depend on unreleased versions)
 - `boto3>=1.34.0`
-- `bedrock-agentcore` (optional dependency via `[agentcore]` extra)
+- `bedrock-agentcore`
 
 ## Project Structure
 
@@ -55,7 +55,7 @@ uv build                         # Build package
 - **No local source dependencies** — never add `[tool.uv.sources]` with local paths
 - **No exceptions from protocol methods** — `execute()` wraps errors in `ExecuteResponse`; `from_env()` MAY raise `ValueError`
 - **AWS env vars** — use `AWS_SESSION_TOKEN` (not legacy `AWS_SECURITY_TOKEN`); test conftest sets 4 vars: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, `AWS_DEFAULT_REGION`
-- **Optional dependencies** — use `try/except ImportError` pattern; extras in `[project.optional-dependencies]`
+- **All dependencies are required** — no optional extras; all backends available on install
 - **Integration tests** — mark with `@pytest.mark.integration`, skipped by default via `addopts = "-m 'not integration'"`
 - **Version** — update in BOTH `pyproject.toml` AND `src/deepagents_contrib_aws/__init__.py`
 - **Test organization** — each backend gets its own `tests/<backend_name>/` subfolder
