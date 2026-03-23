@@ -87,7 +87,15 @@ Each skill follows the [Anthropic Agent Skills](https://agentskills.io/specifica
 
 | Variable | Required | Description |
 |----------|----------|-------------|
+| `ANTHROPIC_API_KEY` | Yes | Anthropic API key for Claude |
+| `AWS_REGION` | Yes | AWS region for S3 and AgentCore |
 | `S3_BACKEND_BUCKET` | Yes | S3 bucket for persistent storage |
 | `S3_BACKEND_PREFIX` | No | Key prefix (e.g., `product-support/`) |
-| `AWS_REGION` | Yes | AWS region for S3 and AgentCore |
-| `AWS_DEFAULT_REGION` | No | AWS region fallback (if `AWS_REGION` not set) |
+| `AWS_ACCESS_KEY_ID` | No* | AWS credentials (if not using IAM role/SSO) |
+| `AWS_SECRET_ACCESS_KEY` | No* | AWS credentials |
+| `AWS_SESSION_TOKEN` | No* | For temporary credentials (STS/SSO) |
+| `LANGSMITH_API_KEY` | No | LangSmith API key for tracing |
+| `LANGCHAIN_TRACING_V2` | No | Set to `true` to enable tracing |
+| `LANGCHAIN_PROJECT` | No | LangSmith project name |
+
+*AWS credentials are resolved via the standard boto3 chain — env vars, `~/.aws/credentials`, SSO, or IAM role.
