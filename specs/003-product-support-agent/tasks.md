@@ -33,7 +33,7 @@
 ## Phase 3: Core Application
 
 <!-- sequential -->
-- [x] T007 Create examples/product_support_agent/graph.py — LangGraph entrypoint: load .env via dotenv, build S3Backend with helper function for prefixed routes, build AgentCoreCodeInterpreterSandbox, create CompositeBackend with sandbox as default and S3 routes for /memories/, /skills/, /conversation_history/, /large_tool_results/. Call create_deep_agent(backend=composite, memory=["/memories/AGENTS.md"], skills=["/skills/"], system_prompt=...). Export compiled graph. Follow the pattern from /home/dhamijag/playground/deep-agents/sdk/hello_world/graph.py.
+- [x] T007 Create examples/product_support_agent/graph.py — LangGraph entrypoint: load .env via dotenv, build S3Backend with helper function for prefixed routes, build AgentCoreCodeInterpreterSandbox, create CompositeBackend with sandbox as default and S3 routes for /memories/, /skills/, /conversation_history/, /large_tool_results/. Call create_deep_agent(backend=composite, memory=["/memories/AGENTS.md"], skills=["/skills/"], system_prompt=...). Export compiled graph.
 
 - [x] T008 Create examples/product_support_agent/setup_backend.py — standalone script: load .env, create S3Backend from env, read local skills/*.md and memory/AGENTS.md files, upload each to S3 at correct paths (e.g., /skills/electronics-support.md, /memories/AGENTS.md). Check if file exists first (read, skip if found). Print status for each file. Runnable via `uv run setup_backend.py`.
 
