@@ -1,6 +1,6 @@
 [project]
 name = "deepagents-contrib-aws"
-version = "0.1.4"
+version = "0.2.0"
 description = "AWS contributions for Deep Agents"
 readme = "README.md"
 license = { text = "MIT" }
@@ -22,6 +22,9 @@ dependencies = [
     "deepagents>=0.4.0",
 ]
 
+[project.optional-dependencies]
+agentcore = ["bedrock-agentcore"]
+
 [project.urls]
 Homepage = "https://github.com/gauravhub/deepagents-contrib-aws"
 Repository = "https://github.com/gauravhub/deepagents-contrib-aws"
@@ -36,6 +39,7 @@ dev = [
     "pytest>=8.0",
     "ruff>=0.4",
     "moto[s3]>=5.0",
+    "bedrock-agentcore",
 ]
 
 [tool.ruff]
@@ -49,5 +53,6 @@ select = ["E", "F", "I", "N", "W", "UP"]
 testpaths = ["tests"]
 markers = [
     "integration: run against a real S3 bucket (requires S3_TEST_BUCKET env var)",
+    "integration: run against real AgentCore (requires AGENTCORE_TEST_REGION env var)",
 ]
 addopts = "-m 'not integration'"

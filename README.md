@@ -8,10 +8,18 @@ AWS backend implementations for the [deepagents](https://github.com/langchain-ai
 
 An S3-backed implementation of the `BackendProtocol` that persists agent workspace files in Amazon S3. Supports all eight protocol methods: `ls`, `read`, `write`, `edit`, `grep`, `glob`, `upload_files`, `download_files`.
 
+### AgentCore Code Interpreter Sandbox
+
+A `SandboxBackendProtocol` implementation that executes code and commands via Amazon Bedrock AgentCore Code Interpreter. Supports Python execution (with variable state preserved across calls) and arbitrary shell commands. File operations use native AgentCore APIs for efficient transfers.
+
 ## Installation
 
 ```bash
+# S3Backend only
 pip install deepagents-contrib-aws
+
+# With AgentCore sandbox support
+pip install deepagents-contrib-aws[agentcore]
 ```
 
 ## Quick Start
@@ -133,7 +141,96 @@ result = backend.upload_files([("/a.txt", b"content a"), ("/b.txt", b"content b"
 result = backend.download_files(["/a.txt", "/b.txt"])
 ```
 
-## Configuration
+## AgentCore Code Interpreter Sandbox
+
+### From constructor
+
+**Minimal** — session starts lazily on first `execute()` call:
+
+```python
+from deepagents_contrib_aws import AgentCoreCodeInterpreterSandbox
+
+sandbox = AgentCoreCodeInterpreterSandbox(region_name="us-west-2")
+
+# Execute Python (variable state preserved across calls)
+result = sandbox.execute('python3 -c "x = 42; print(x)"')
+print(result.output)  # "42"
+
+# Execute shell commands
+result = sandbox.execute("echo hello && ls /tmp")
+print(result.output)
+
+sandbox.stop()
+```
+
+**With context manager** — session automatically cleaned up:
+
+```python
+from deepagents_contrib_aws import AgentCoreCodeInterpreterSandbox
+
+with AgentCoreCodeInterpreterSandbox() as sandbox:
+    result = sandbox.execute('python3 -c "print(1 + 1)"')
+    print(result.output)  # "2"
+```
+
+### From environment variables
+
+```bash
+export AGENTCORE_REGION=us-west-2          # or AWS_REGION / AWS_DEFAULT_REGION
+export AGENTCORE_SESSION_TIMEOUT=1800      # optional (default: 900)
+```
+
+```python
+from deepagents_contrib_aws import AgentCoreCodeInterpreterSandbox
+
+sandbox = AgentCoreCodeInterpreterSandbox.from_env()
+```
+
+**Override** — `from_env()` accepts keyword arguments that take precedence over environment variables:
+
+| Kwarg | Overrides env var |
+|-------|-------------------|
+| `region_name` | `AGENTCORE_REGION` / `AWS_REGION` / `AWS_DEFAULT_REGION` |
+| `session_timeout_seconds` | `AGENTCORE_SESSION_TIMEOUT` |
+| `code_interpreter_identifier` | `AGENTCORE_CODE_INTERPRETER_ID` |
+
+### File operations
+
+```python
+with AgentCoreCodeInterpreterSandbox() as sandbox:
+    # Upload files (text and binary)
+    sandbox.upload_files([
+        ("/tmp/data.csv", b"name,value\nfoo,42"),
+        ("/tmp/image.png", open("local.png", "rb").read()),
+    ])
+
+    # Download files
+    results = sandbox.download_files(["/tmp/data.csv"])
+    print(results[0].content)  # b"name,value\nfoo,42"
+```
+
+### With deepagents
+
+```python
+from deepagents import create_deep_agent
+from deepagents_contrib_aws import AgentCoreCodeInterpreterSandbox
+
+sandbox = AgentCoreCodeInterpreterSandbox.from_env()
+agent = create_deep_agent(backend=sandbox)
+```
+
+### Constructor parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `region_name` | `str` | `"us-west-2"` | AWS region for AgentCore |
+| `session_timeout_seconds` | `int` | `900` | Session timeout (max 28800) |
+| `max_output_chars` | `int` | `100_000` | Output truncation limit |
+| `code_interpreter_identifier` | `str` | `"aws.codeinterpreter.v1"` | Interpreter ID |
+
+AWS credentials are resolved via the standard boto3 credential chain: environment variables, `~/.aws/credentials`, AWS SSO, or IAM role.
+
+## S3Backend Configuration
 
 ### Constructor parameters
 
