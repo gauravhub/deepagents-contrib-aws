@@ -9,12 +9,12 @@ User Request
     |
     v
 +---------------------------------------------+
-|  Deep Research Agent (Orchestrator)          |
+|  Deep Research Agent (Orchestrator)         |
 |  - Plans with write_todos                   |
 |  - Delegates to research-agent subagent     |
 |  - Synthesizes reports                      |
 |  - Loads skills on demand                   |
-|  - HITL on file writes                      |
+|  - Humn in the loop (HITL) on file writes   |
 +----------+----------------------------------+
            |
      +-----+-----+
