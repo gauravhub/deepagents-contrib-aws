@@ -10,4 +10,5 @@ dependencies = [
     "tavily-python",
     "python-dotenv",
     "langgraph",
+    "langgraph-cli[inmem]",
 ]
