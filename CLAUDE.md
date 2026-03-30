@@ -59,3 +59,10 @@ uv build                         # Build package
 - **Integration tests** — mark with `@pytest.mark.integration`, skipped by default via `addopts = "-m 'not integration'"`
 - **Version** — update in BOTH `pyproject.toml` AND `src/deepagents_contrib_aws/__init__.py`
 - **Test organization** — each backend gets its own `tests/<backend_name>/` subfolder
+
+## Active Technologies
+- Python 3.11+ + deepagents>=0.4.0, deepagents-contrib-aws>=0.2.0, langchain-anthropic, tavily-python, langgraph, python-dotenv (004-deep-research-agent)
+- Amazon S3 via S3Backend (7 route prefixes), AgentCoreCodeInterpreterSandbox (default) (004-deep-research-agent)
+
+## Recent Changes
+- 004-deep-research-agent: Added Python 3.11+ + deepagents>=0.4.0, deepagents-contrib-aws>=0.2.0, langchain-anthropic, tavily-python, langgraph, python-dotenv

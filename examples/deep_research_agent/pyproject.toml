@@ -1,0 +1,13 @@
+[project]
+name = "deep-research-agent"
+version = "0.1.0"
+description = "Deep research agent example using deepagents with AWS backends (S3 + AgentCore)"
+requires-python = ">=3.11"
+dependencies = [
+    "deepagents>=0.4.0",
+    "deepagents-contrib-aws>=0.2.0",
+    "langchain-aws",
+    "tavily-python",
+    "python-dotenv",
+    "langgraph",
+]
