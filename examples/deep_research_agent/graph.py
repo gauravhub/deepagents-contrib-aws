@@ -187,7 +187,6 @@ graph = create_deep_agent(
     model=ChatBedrockConverse(
         model_id="us.anthropic.claude-sonnet-4-20250514-v1:0",
         region_name=region,
-        supports_cache_control=True,
     ),
     tools=[tavily_search],
     system_prompt=SYSTEM_PROMPT,
