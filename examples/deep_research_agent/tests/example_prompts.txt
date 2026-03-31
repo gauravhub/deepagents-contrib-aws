@@ -1,0 +1,30 @@
+Cleanup memory:
+===============
+uv run tests/clean_memories.py
+
+Launch AWS Console:
+===================
+uv run tests/aws_console.py
+
+Launch LangSmith Studio:
+========================
+uv run langgraph dev
+
+First prompt:
+=============
+
+Hi! I'm Alice, a researcher focused on AI safety and alignment. I work at the Center for AI Policy in Washington DC. Some things about me: I prefer reading academic papers over blog posts, I like APA citation format, and I usually work on 2-3 research projects at a time. Right now I'm deep into multi-agent coordination risks. My go-to journals are Nature Machine Intelligence and AI & Society. I tend to work late evenings Pacific time.
+
+Some context on our research group: We're a team of 6 researchers investigating the policy implications of autonomous AI agents. Our current focus areas are agent-to-agent delegation risks, memory persistence in long-running agents, and regulatory frameworks for AI autonomy. We publish quarterly policy briefs and our shared bibliography lives in Zotero under the collection "Agent Governance 2025". Our funding cycle renews in September.
+
+Please save all of this so you remember it in future sessions — both my personal details and the team-wide context.
+
+Second Prompt:
+==============
+What information do you have about me and my research group?
+
+Third Prompt:
+=============
+
+Research the current GDP of the top 5 economies in the world. Once you have the data, write a Python script to calculate each country's percentage share of the combined
+  total, rank them, and generate a simple bar chart saved as a PNG file.
