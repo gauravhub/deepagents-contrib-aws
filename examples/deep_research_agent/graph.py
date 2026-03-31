@@ -240,8 +240,4 @@ graph = create_deep_agent(
     skills=["/skills/"],
     subagents=[research_subagent],
     backend=backend_factory,
-    interrupt_on={
-        "write_file": True,
-        "edit_file": True,
-    },
 )
