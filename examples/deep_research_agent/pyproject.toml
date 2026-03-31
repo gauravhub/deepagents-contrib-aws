@@ -5,7 +5,7 @@ description = "Deep research agent example using deepagents with AWS backends (S
 requires-python = ">=3.11"
 dependencies = [
     "deepagents>=0.4.0",
-    "deepagents-contrib-aws>=0.2.0",
+    "deepagents-contrib-aws>=0.2.3",
     "langchain-aws",
     "tavily-python",
     "python-dotenv",
