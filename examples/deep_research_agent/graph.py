@@ -29,6 +29,7 @@ from deepagents_contrib_aws import (
 )
 from langchain_aws import ChatBedrockConverse
 from langchain_core.tools import tool
+from langgraph.config import get_config
 from tavily import TavilyClient
 
 # --- System Prompt ---
@@ -39,20 +40,41 @@ synthesize findings, and produce polished reports and content.
 
 ## Structured Long-Term Memory
 
-Your memory is organized into three types, each stored persistently in S3:
+Your memory is organized into three categories, each with user-private and \
+shared scopes. All memories are stored persistently in S3.
 
-- `/memories/semantic/` — Facts & knowledge: user preferences, topic summaries, \
-project context. Example files: `user_preferences.md`, `project_context.md`
-- `/memories/episodic/` — Past experiences: dated research session logs, interaction \
-summaries. Example files: `2025-03-30_ai_agents_research.md`, `session_log.md`
-- `/memories/procedural/` — Instructions & rules: report formatting, citation \
-standards, learned workflows. Example files: `report_format.md`, `coding_standards.md`
+### Memory Categories
 
-When asked to remember something, categorize it and save to the appropriate \
-memory type. When starting a new research task, check all three memory paths \
-for relevant prior knowledge.
+- **Semantic** — Facts & knowledge: preferences, topic summaries, project context
+- **Episodic** — Past experiences: dated research session logs, interaction summaries
+- **Procedural** — Instructions & rules: formatting, citation standards, workflows
 
-Regular files (not in `/memories/`) are ephemeral scratch space.\
+### Memory Scopes
+
+Each category has two scopes:
+
+- `user/` — Private to the current user (isolated by user_id)
+- `shared/` — Visible to all users across conversations
+
+### Memory Paths
+
+| Path | Scope |
+|------|-------|
+| `/memories/semantic/user/` | Private facts & knowledge |
+| `/memories/semantic/shared/` | Shared facts & knowledge |
+| `/memories/episodic/user/` | Private experiences |
+| `/memories/episodic/shared/` | Shared experiences |
+| `/memories/procedural/user/` | Private rules & workflows |
+| `/memories/procedural/shared/` | Shared rules & workflows |
+
+### Guidelines
+
+- When asked to remember something, categorize it (semantic/episodic/procedural) \
+and decide the scope (user-private or shared).
+- Personal preferences, individual session logs, and personal workflows go to `user/`.
+- Team knowledge, shared standards, and collaborative findings go to `shared/`.
+- When starting a new task, check all six memory paths for prior knowledge.
+- Regular files (not in `/memories/`) are ephemeral scratch space.\
 """
 
 # --- Tools ---
@@ -115,8 +137,8 @@ research_subagent = {
 # --- Backend ---
 
 
-def _build_backend():
-    """Build CompositeBackend with AgentCore + S3 routing."""
+def _validate_env() -> tuple[str, str, str]:
+    """Validate required env vars and return (bucket, region, base_prefix)."""
     bucket = os.environ.get("S3_BACKEND_BUCKET")
     if not bucket:
         print(
@@ -144,39 +166,63 @@ def _build_backend():
     if base_prefix:
         base_prefix = base_prefix + "/"
 
-    s3_region = (
-        os.environ.get("AWS_REGION")
-        or os.environ.get("AWS_DEFAULT_REGION")
-    )
+    return bucket, region, base_prefix
 
-    def _s3(suffix: str) -> S3Backend:
-        prefix = f"{base_prefix}{suffix}".strip("/")
-        return S3Backend(
-            bucket=bucket,
-            prefix=prefix or "",
-            region_name=s3_region,
+
+def _build_backend_factory():
+    """Build a backend factory with per-user and shared memory scoping.
+
+    The factory is called per invocation so it can read user_id from
+    the current config via ``get_config()``.  S3 prefixes are scoped:
+
+    - ``memories/<category>/user/<user_id>/`` — private to that user
+    - ``memories/<category>/shared/``         — visible to everyone
+    """
+    bucket, region, base_prefix = _validate_env()
+
+    # Sandbox is stateless config — safe to reuse across invocations
+    sandbox = AgentCoreCodeInterpreterSandbox(region_name=region)
+
+    def backend_factory(rt):  # noqa: ANN001
+        user_id = (
+            get_config()
+            .get("configurable", {})
+            .get("user_id", "default")
         )
 
-    sandbox = AgentCoreCodeInterpreterSandbox(
-        region_name=region,
-    )
+        def _s3(suffix: str) -> S3Backend:
+            prefix = f"{base_prefix}{suffix}".strip("/")
+            return S3Backend(
+                bucket=bucket,
+                prefix=prefix or "",
+                region_name=region,
+            )
 
-    routes = {
-        "/memories/semantic/": _s3("memories/semantic"),
-        "/memories/episodic/": _s3("memories/episodic"),
-        "/memories/procedural/": _s3("memories/procedural"),
-        "/memories/": _s3("memories"),
-        "/skills/": _s3("skills"),
-        "/conversation_history/": _s3("conversation_history"),
-        "/large_tool_results/": _s3("large_tool_results"),
-    }
+        routes = {
+            # Per-user memory (scoped by user_id)
+            "/memories/semantic/user/": _s3(f"memories/semantic/user/{user_id}"),
+            "/memories/episodic/user/": _s3(f"memories/episodic/user/{user_id}"),
+            "/memories/procedural/user/": _s3(f"memories/procedural/user/{user_id}"),
+            # Shared memory (same for all users)
+            "/memories/semantic/shared/": _s3("memories/semantic/shared"),
+            "/memories/episodic/shared/": _s3("memories/episodic/shared"),
+            "/memories/procedural/shared/": _s3("memories/procedural/shared"),
+            # Catch-all for other memory paths
+            "/memories/": _s3("memories"),
+            # Non-memory routes
+            "/skills/": _s3("skills"),
+            "/conversation_history/": _s3("conversation_history"),
+            "/large_tool_results/": _s3("large_tool_results"),
+        }
 
-    return CompositeBackend(default=sandbox, routes=routes)
+        return CompositeBackend(default=sandbox, routes=routes)
+
+    return backend_factory
 
 
 # --- Agent ---
 
-backend = _build_backend()
+backend_factory = _build_backend_factory()
 
 region = (
     os.environ.get("AWS_REGION")
@@ -193,7 +239,7 @@ graph = create_deep_agent(
     memory=["/memories/AGENTS.md"],
     skills=["/skills/"],
     subagents=[research_subagent],
-    backend=backend,
+    backend=backend_factory,
     interrupt_on={
         "write_file": True,
         "edit_file": True,

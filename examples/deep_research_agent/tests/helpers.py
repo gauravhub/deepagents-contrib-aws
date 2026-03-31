@@ -20,7 +20,7 @@ from langgraph.types import Command
 
 from graph import (
     SYSTEM_PROMPT,
-    backend,
+    backend_factory,
     research_subagent,
     tavily_search,
 )
@@ -47,15 +47,17 @@ def make_graph(checkpointer=None, interrupt_on=None):
         memory=["/memories/AGENTS.md"],
         skills=["/skills/"],
         subagents=[research_subagent],
-        backend=backend,
+        backend=backend_factory,
         interrupt_on=interrupt_on,
         checkpointer=checkpointer,
     )
 
 
-def run_prompt(graph, prompt: str, thread_id: str, max_iterations: int = 20) -> dict:
+def run_prompt(
+    graph, prompt: str, thread_id: str, user_id: str = "default", max_iterations: int = 20
+) -> dict:
     """Run a prompt, auto-approving HITL interrupts. Returns full result dict."""
-    config = {"configurable": {"thread_id": thread_id}}
+    config = {"configurable": {"thread_id": thread_id, "user_id": user_id}}
 
     result = graph.invoke(
         {"messages": [("human", prompt)]},
@@ -108,6 +110,32 @@ def read_s3_file(key: str) -> str:
     s3 = boto3.client("s3", region_name=get_region())
     obj = s3.get_object(Bucket=bucket, Key=key)
     return obj["Body"].read().decode("utf-8")
+
+
+def delete_s3_prefix(prefix_suffix: str = "") -> int:
+    """Delete all objects in S3 under the configured prefix + suffix.
+
+    Returns the number of objects deleted.
+    """
+    import boto3
+
+    bucket = os.environ["S3_BACKEND_BUCKET"]
+    base_prefix = os.environ.get("S3_BACKEND_PREFIX", "").strip("/")
+    if base_prefix:
+        base_prefix += "/"
+    full_prefix = f"{base_prefix}{prefix_suffix}"
+
+    s3 = boto3.client("s3", region_name=get_region())
+    response = s3.list_objects_v2(Bucket=bucket, Prefix=full_prefix)
+    objects = response.get("Contents", [])
+    if not objects:
+        return 0
+
+    s3.delete_objects(
+        Bucket=bucket,
+        Delete={"Objects": [{"Key": obj["Key"]} for obj in objects]},
+    )
+    return len(objects)
 
 
 def print_pass(test_name: str):
