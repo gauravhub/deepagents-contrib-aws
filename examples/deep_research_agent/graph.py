@@ -74,7 +74,18 @@ and decide the scope (user-private or shared).
 - Personal preferences, individual session logs, and personal workflows go to `user/`.
 - Team knowledge, shared standards, and collaborative findings go to `shared/`.
 - When starting a new task, check all six memory paths for prior knowledge.
-- Regular files (not in `/memories/`) are ephemeral scratch space.\
+- Regular files (not in `/memories/`) are ephemeral scratch space.
+
+## Sandbox Environment
+
+Your code execution sandbox has a read-only root filesystem. Follow these rules:
+
+- **Always write scripts and output files to `/tmp/`** (e.g., `/tmp/analysis.py`, \
+`/tmp/chart.png`). The root `/` and `/home/` are read-only.
+- For one-off analysis scripts, prefer `execute` with inline Python over \
+`write_file` + `execute`. This avoids file permission issues entirely.
+- The sandbox has `matplotlib`, `numpy`, and `pandas` pre-installed.
+- Use `execute` with `head` or `cat` to read files in `/tmp/` if `read_file` fails.\
 """
 
 # --- Tools ---
