@@ -133,12 +133,11 @@ def main() -> None:
 
     url = get_signin_url(destination)
 
-    if args.no_open:
-        print(f"\nConsole URL:\n{url}")
-    else:
-        print("Opening browser...")
+    print(f"\nConsole URL:\n{url}")
+
+    if not args.no_open:
+        print("\nOpening browser...")
         webbrowser.open(url)
-        print("Done.")
 
 
 if __name__ == "__main__":

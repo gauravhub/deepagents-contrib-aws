@@ -34,8 +34,18 @@ def _extract_python_from_command(command: str) -> str | None:
 
     Returns the inner code string, or ``None`` if the command does
     not match the ``python3 -c`` pattern.
+
+    Commands that use heredocs (``<<``) are returned as ``None`` so
+    they are routed to ``executeCommand`` (shell) instead of
+    ``executeCode`` (Jupyter kernel), because heredocs pipe data
+    via stdin which ``executeCode`` does not support.
     """
     command = command.strip()
+
+    # Heredoc commands must run as shell commands so stdin works
+    if "<<" in command:
+        return None
+
     m = re.match(r"python3\s+-c\s+([\"'])(.*)$", command, re.DOTALL)
     if not m:
         return None
@@ -47,7 +57,9 @@ def _extract_python_from_command(command: str) -> str | None:
             i += 2
             continue
         if rest[i] == quote:
-            return rest[:i].encode().decode("unicode_escape")
+            # Return raw code without unicode_escape decoding,
+            # which corrupts escaped quotes in f-strings
+            return rest[:i]
         i += 1
     return None
 
